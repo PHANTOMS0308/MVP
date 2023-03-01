@@ -4,7 +4,8 @@
   "description": "Online multiplayer game like pictionary",
   "main": "index.js",
   "scripts": {
-    "develop": "webpack server"
+    "develop": "webpack server",
+    "server": "npx nodemon server/index.js"
   },
   "repository": {
     "type": "git",
@@ -21,9 +22,10 @@
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "mongoose": "^6.10.0",
-    "node-sass": "^8.0.0",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "sass": "^1.58.3",
+    "ws": "^8.12.1"
   },
   "devDependencies": {
     "@babel/core": "^7.21.0",
@@ -32,6 +34,7 @@
     "babel-loader": "^9.1.2",
     "css-loader": "^6.7.3",
     "html-webpack-plugin": "^5.5.0",
+    "nodemon": "^2.0.20",
     "sass-loader": "^13.2.0",
     "style-loader": "^3.3.1",
     "webpack": "^5.75.0",
