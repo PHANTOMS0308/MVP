@@ -1,0 +1,62 @@
+// Now only login container, subject to change later 
+.login__container {
+  h1 {
+    font-size: 3rem;
+    margin-top: 0;
+    margin-bottom: 1rem;
+  }
+
+  small {
+    color: orange;
+    position: absolute;
+    right: 0.5rem;
+    bottom: 0.5rem;
+  }
+
+  input {
+    width: 60vw;
+    height: 2rem;
+    border-radius: 1rem;
+    text-align: center;
+    border: none;
+    font-size: 1.2rem;
+  }
+
+  input:focus {
+    outline: none;
+  }
+
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+
+// Loading Page, still just for demo, subject to great change later
+.load__container {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 2rem;
+}
+
+@keyframes loading {
+  0% { opacity: 0%; }
+  100% { opacity: 100%; }
+}
+
+.load__status {
+  &--good {
+    animation: loading 3s infinite alternate-reverse;
+  }
+  
+  &--bad {
+    color: orange;
+  }
+}

@@ -1,10 +1,18 @@
-@use 'canvas';
+@use 'game';
+@use 'login';
+@use 'global';
 
 * {
   box-sizing: border-box;
 }
 
+html {
+  font-size: 16px;
+}
+
 body {
   margin: 0;
-  background: gray;
+  background: #292a2d;
+  color: white;
+  font-family: Tahoma, sans-serif;
 }
