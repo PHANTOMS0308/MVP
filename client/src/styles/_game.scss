@@ -86,6 +86,24 @@
   grid-column: 4 / span 9;
   grid-row: 1 / span 7;
   padding: 1rem;
+  position: relative;
+
+  // word prompt
+  & > span {
+    position: absolute;
+    font-weight: bold;
+    font-size: 2rem;
+
+    &:first-child {
+      top: 0.5rem;
+      left: 0.5rem;
+    }
+
+    &:last-child {
+      bottom: 0.5rem;
+      right: 0.5rem;
+    }
+  }
 
   & > canvas {
     border: 2px solid white;

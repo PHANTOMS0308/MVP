@@ -1,8 +1,9 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { useSocket, getDataByType, sendDataByType } from '../utils/socket.jsx';
 import Canvas from './Canvas.jsx';
+import Timer from './Timer.jsx';
 
-export default function GameCanvasWriter({ userId, getNextPrompt }) {
+export default function GameCanvasWriter({ word, roundFinished }) {
   const [strokeWidth, setStrokeWidth] = useState(3);
   const [strokeColor, setStrokeColor] = useState('white');
 
@@ -69,10 +70,17 @@ export default function GameCanvasWriter({ userId, getNextPrompt }) {
     </div>
   );
 
+  const canvasProps = {
+    strokeWidth,
+    strokeColor,
+    isWriter: roundFinished ? false : true
+  }
+
   return (
     < >
       <main className='game__canvas'>
-        <Canvas { ...{ strokeWidth, strokeColor, isWriter: true } } />
+        <span>The word is: { word }</span>
+        <Canvas { ...canvasProps } />
       </main>
       <nav className='game__toolbar'>
         { colorPicker }

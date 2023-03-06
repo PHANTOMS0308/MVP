@@ -3,6 +3,7 @@ const { WebSocketServer, WebSocket } = require('ws');
 const wss = new WebSocketServer({ port: 8080 });
 const playerInfos = new Map;
 const playerLimit = 3;
+const playerIds = [];
 
 function broadcastData(type, content, notSendTo=null) {
   wss.clients.forEach(client => {
@@ -12,7 +13,24 @@ function broadcastData(type, content, notSendTo=null) {
   });
 }
 
-let gameRound = 0;
+// This should be in the database, will be refactor later
+const words = [
+  'Strawberry', 'Ketchup', 'Rainbow', 'Summer', 'Watermelon',
+  'Batter', 'Laptop', 'USA', 'Japan', 'China', 'Disney', 'Apple',
+  'Lion', 'Tiger', 'Superman', 'Pikachu'
+];
+
+let currentWord = null;
+let currentWriter = null;
+
+function nextRound(round) {
+  currentWord = words[round];
+  currentWriter = playerIds[round%playerLimit];
+}
+
+// this is a naive solution, when readyPlayers reach 3, we send out new round information
+// so the clients know they should start a new game, and then we reset readyPlayers
+let readyPlayers = 0;
 
 wss.on('connection', function connection(ws, req) {
   ws.on('error', console.error);
@@ -35,6 +53,7 @@ wss.on('connection', function connection(ws, req) {
       case 'login':
         content.score = 0;
         playerInfos.set(content.id, content);
+        playerId.push(content.id);
         console.log(playerInfos); // console.log
         break;
       case 'load':
@@ -54,8 +73,14 @@ wss.on('connection', function connection(ws, req) {
         if (content.clearAll) broadcastData('canvas', content);
         else broadcastData('canvas', content, ws);        
         break;
-      case 'round': 
-        
+      case 'game': 
+        readyPlayers += 1;
+        if (readyPlayers >= 3) {
+          nextRound();
+          broadcastData('game', { writer: currentWriter, word: currentWord });
+          readyPlayers = 0;
+        }
+        break;
     }
   }); 
 });
