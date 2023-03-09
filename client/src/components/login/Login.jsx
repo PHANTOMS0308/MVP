@@ -1,16 +1,31 @@
-import React, { useState } from 'react';
-import { sendDataByType } from '../utils/socket.jsx';
+import React, { useState, useEffect } from 'react';
+import { useSocket, getDataByType, sendDataByType } from '../utils/socket.jsx';
 import { redirect } from '../utils/router.jsx';
 
-export default function Login({ userId, setUserName }) {
+export default function Login({ userId, setUserName, setIsHost }) {
+  const socket = useSocket();
+
+  useEffect(() => {
+    function updateHost(event) {
+      const content = getDataByType('login', event);
+
+      if (content) {
+        setIsHost(content.isHost);
+      }
+    }
+
+    socket.addEventListener('message', updateHost);
+
+    return () => socket.removeEventListener('message', updateHost);
+  }, []);
+
   function onSubmit(event) {
     event.preventDefault();
     const userName = document.forms[0].username.value;
 
-    sendDataByType('login', { id: userId, userName });
-
     setUserName(userName);
-    redirect(window.location.origin + '/load');    
+    sendDataByType('login', { id: userId, userName });
+    setTimeout(() => redirect(window.location.origin + '/load'), 1000);
   }
 
   const inputProps = {

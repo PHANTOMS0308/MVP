@@ -73,7 +73,7 @@ export default function GameCanvasWriter({ word, roundFinished }) {
   const canvasProps = {
     strokeWidth,
     strokeColor,
-    isWriter: roundFinished ? false : true
+    isWriter: true// isWriter: roundFinished ? false : true
   }
 
   return (

@@ -2,9 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useSocket, getDataByType, sendDataByType } from '../utils/socket.jsx';
 import { redirect } from '../utils/router.jsx';
 
-const maxPlayerCount = 3;
-
-export default function Load() {
+export default function Load({ isHost }) {
   const [playerCount, setPlayerCount] = useState(1);
   const socket = useSocket();
   
@@ -12,23 +10,29 @@ export default function Load() {
 
     function updatePlayerCount(event) {
       const content = getDataByType('load', event);
-      
-      if (content) setPlayerCount(content.playerCount);
+
+      if (content) {
+        setPlayerCount(content.playerCount);
+      }
+    }
+
+    function startGame(event) {
+      const content = getDataByType('start', event);
+
+      if (content && content.start) {
+        redirect(window.location.origin + '/game');
+      }
     }
 
     socket.addEventListener('message', updatePlayerCount);
+    socket.addEventListener('message', startGame);
     sendDataByType('load', {});
 
     return () => {
       socket.removeEventListener('message', updatePlayerCount);
+      socket.removeEventListener('message', startGame);
     }
   }, []);
-
-  useEffect(() => {
-    if (playerCount >= maxPlayerCount) {
-      redirect(window.location.origin +'/game');
-    }
-  }, [playerCount]);
 
   return (
     <main className='load__container'>
@@ -39,6 +43,7 @@ export default function Load() {
           : 'Sorry, the server is full...'
         }
       </p>
+      { isHost ? <button onClick={ () => sendDataByType('start') }>START</button> : null }
     </main>
   );
 }

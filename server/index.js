@@ -53,8 +53,11 @@ wss.on('connection', function connection(ws, req) {
       case 'login':
         content.score = 0;
         playerInfos.set(content.id, content);
-        playerId.push(content.id);
-        console.log(playerInfos); // console.log
+        playerIds.push(content.id);
+        ws.send(JSON.stringify({ 
+          type: 'login', 
+          content: { isHost: content.id === playerIds[0] } 
+        }));
         break;
       case 'load':
         broadcastData('load', { playerCount: wss.clients.size });
@@ -63,6 +66,7 @@ wss.on('connection', function connection(ws, req) {
         if (content.id) {
           const { id, addScore } = content;
           playerInfos.get(id).score += Number(addScore);
+          playerInfos.get(currentWriter).score += 1; // drawer add one points for now
         }
         broadcastData('score', [...playerInfos.values()]);
         break;
@@ -73,10 +77,14 @@ wss.on('connection', function connection(ws, req) {
         if (content.clearAll) broadcastData('canvas', content);
         else broadcastData('canvas', content, ws);        
         break;
+      case 'start':
+        broadcastData('start', { start: true });
+        break;
       case 'game': 
         readyPlayers += 1;
         if (readyPlayers >= 3) {
-          nextRound();
+          nextRound(content.round);
+          console.log(content.round, currentWriter, currentWord);
           broadcastData('game', { writer: currentWriter, word: currentWord });
           readyPlayers = 0;
         }

@@ -7,8 +7,8 @@ import { useSocket, getDataByType, sendDataByType } from '../utils/socket.jsx';
 import Timer from './Timer.jsx';
 
 export default function Game({ userId, userName }) {
-  const [round, setRound] = setState(0);
-  const [gameInfo, setGameInfo] = setState({ writer: null, word: null });
+  const [round, setRound] = useState(0);
+  const [gameInfo, setGameInfo] = useState({ writer: null, word: null });
   const [roundFinished, setRoundFinished] = useState(false);
   const socket = useSocket();
   const { writer, word } = gameInfo;
@@ -16,12 +16,15 @@ export default function Game({ userId, userName }) {
   useEffect(() => {
     function updateGameInfo(event) {
       const content = getDataByType('game', event);
-
-      setGameInfo(content);
+      
+      if (content) {
+        console.log(content, userId);
+        setGameInfo(content);
+      }
     }
 
     socket.addEventListener('message', updateGameInfo);
-    socket.sendDataByType('game', { round });
+    sendDataByType('game', { round });
 
     // reset roundFinished every round
     setRoundFinished(false);
@@ -45,10 +48,9 @@ export default function Game({ userId, userName }) {
       }
       {
         roundFinished
-        ? <Timer seconds={ 60 } callback={ () => setRoundFinished(true) } />
-        : <Timer seconds={ 5 } message='Next Round Start in' callback={ nextRound } />
+        ? <Timer key='1' seconds={ 5 } message='Next Round Start in' callback={ nextRound } />
+        : <Timer key='2' seconds={ 25 } callback={ () => setRoundFinished(true) } />
       }
-      <div>
     </div>
   );
   // You may not want to pass word to Reader, otherwise they might cheat

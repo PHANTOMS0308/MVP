@@ -20,7 +20,7 @@ export function getDataByType(type, event) {
   const data = JSON.parse(event.data);
 
   if (data.type === type) return data.content;
-  else  return null; 
+  else return null; 
 }
 
 // send data and mark type

@@ -1,4 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react';
+import { sendDataByType } from '../utils/socket.jsx';
 import Canvas from './Canvas.jsx';
 import Timer from './Timer.jsx';
 
@@ -6,24 +7,36 @@ export default function GameCanvasReader({ roundFinished, word, userId }) {
   const [answerIsCorrect, setAnswerIsCorrect] = useState(false);
   const [answer, setAnswer] = useState('');
 
+  useEffect(() => {
+    setAnswerIsCorrect(false);
+  }, [word]);
+
+
   const inputProps = {
     value: answer,
+    placeholder: 'Press Ctrl + Enter to Submit the Answer...',
     onChange(e) { setAnswer(e.target.value); },
     onKeyDown(e) {
       if (e.code === 'Enter' && (e.ctrlKey || e.metaKey)) {
-        if (answer.toLowerCase() === word.toLowerCase()) setAnswerIsCorrect(true);
-        else alert('Your answer is wrong!'); // need to change this for better UX
+        if (answer.toLowerCase() === word.toLowerCase()) {
+          sendDataByType('score', { id: userId, addScore: 2 });
+          setAnswerIsCorrect(true);
+        } else {
+          alert('Your answer is wrong!'); // need to change this for better UX
+        }
       }
     }
   };
 
   const correctStatement = `You are ${answerIsCorrect ? 'correct' : 'wrong'}!`;
   const answerStatement = `The correct answer is ${word}`;
-  const messsage = <p>{ `${correctStatement} ${answerStatement}` }</p>;
+  const message = <p>{ `${correctStatement} ${answerStatement}` }</p>;
 
   return (
     < >
-      <Canvas isWriter={ false } />
+      <main className='game__canvas'>
+        <Canvas isWriter={ false } />
+      </main>
       <nav className='game__answerbar'>
         { 
           roundFinished || answerIsCorrect

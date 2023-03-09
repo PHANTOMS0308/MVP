@@ -8,11 +8,12 @@ import '../styles/index.scss';
 import { v4 } from 'uuid';
 
 const prompts = ['apple', 'laptop', 'amazon', 'google', 'javascript'];
+const userId = v4();
 let i = 0;
 
 export default function App() {
-  const userId = v4();
   const [userName, setUserName] = useState('');
+  const [isHost, setIsHost] = useState(false);
 
   function getNextPrompt() {
     if (i >= prompts.length) return null;
@@ -23,10 +24,10 @@ export default function App() {
   return (
     <SocketProvider>
       <Route pathName='/'> 
-        <Login { ...{ userId, setUserName } }/>
+        <Login { ...{ userId, setUserName, setIsHost } }/>
       </Route>
       <Route pathName='/load'>
-        <Load />
+        <Load isHost={ isHost } />
       </Route>
       <Route pathName='/game'>
         <Game { ...{ userId, userName, getNextPrompt } } />
