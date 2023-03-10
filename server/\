@@ -3,7 +3,7 @@ const { WebSocketServer, WebSocket } = require('ws');
 const wss = new WebSocketServer({ port: 8080 });
 const playerInfos = new Map;
 const playerLimit = 4;
-let playerIds = [];
+const playerIds = [];
 
 function broadcastData(type, content, notSendTo=null) {
   wss.clients.forEach(client => {
@@ -15,17 +15,17 @@ function broadcastData(type, content, notSendTo=null) {
 
 // This should be in the database, will be refactor later
 const words = [
-  'Strawberry', 'USA', 'Cowboy', 'Ketchup', 'Laptop',
-  'God', 'Spiderman', 'JavaScript', 'Disney', 'Rapper'
+  'Strawberry', 'Ketchup', 'Rainbow', 'Summer', 'Watermelon',
+  'Batter', 'Laptop', 'USA', 'Japan', 'China', 'Disney', 'Apple',
+  'Lion', 'Tiger', 'Superman', 'Pikachu'
 ];
 
 let currentWord = null;
 let currentWriter = null;
 
 function nextRound(round) {
-  const N = playerIds.length;
   currentWord = words[round];
-  currentWriter = playerIds[round%N];
+  currentWriter = playerIds[round%playerLimit];
 }
 
 // this is a naive solution, when readyPlayers reach 3, we send out new round information
@@ -37,7 +37,7 @@ wss.on('connection', function connection(ws, req) {
  
   // No connection allowed when clients number exceed 3
   if (wss.clients.size > playerLimit) {
-    console.log(`Reject connection because players exceed ${playerLimit}`);
+    console.log('Reject connection because players exceed 3');
     ws.close();
   }
 
@@ -53,10 +53,10 @@ wss.on('connection', function connection(ws, req) {
       case 'login':
         content.score = 0;
         playerInfos.set(content.id, content);
-        playerIds = [...playerInfos.keys()];
+        playerIds.push(content.id);
         ws.send(JSON.stringify({ 
           type: 'login', 
-          content: { isHost: playerInfos.size === 1 } 
+          content: { isHost: content.id === playerIds[0] } 
         }));
         console.log(playerInfos, playerIds);
         break;
@@ -83,14 +83,10 @@ wss.on('connection', function connection(ws, req) {
         break;
       case 'game': 
         readyPlayers += 1;
-        if (readyPlayers >= playerIds.length) {
+        if (readyPlayers >= 3) {
           nextRound(content.round);
-          broadcastData('canvas', JSON.stringify({ type: 'canvas', clearAll: true }));
-          broadcastData('game', { 
-            writer: currentWriter, 
-            writerName: playerInfos.get(currentWriter).userName,
-            currentWord 
-          });
+          console.log(content.round, currentWriter, currentWord);
+          broadcastData('game', { writer: currentWriter, word: currentWord });
           readyPlayers = 0;
         }
         break;

@@ -3,7 +3,7 @@ import { sendDataByType } from '../utils/socket.jsx';
 import Canvas from './Canvas.jsx';
 import Timer from './Timer.jsx';
 
-export default function GameCanvasReader({ roundFinished, word, userId }) {
+export default function GameCanvasReader({ writer, roundFinished, word, userId }) {
   const [answerIsCorrect, setAnswerIsCorrect] = useState(false);
   const [answer, setAnswer] = useState('');
 
@@ -35,6 +35,7 @@ export default function GameCanvasReader({ roundFinished, word, userId }) {
   return (
     < >
       <main className='game__canvas'>
+        <span>{ writer } is drawing</span>
         <Canvas isWriter={ false } />
       </main>
       <nav className='game__answerbar'>

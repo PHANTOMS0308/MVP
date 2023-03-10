@@ -5,7 +5,7 @@ export default function Canvas({ strokeWidth, strokeColor, isWriter }) {
   const canvasRef = useRef(null);
   const pointerCoords = useRef(null);
   const socket = useSocket();
-  
+
   // For non-drawing canvas, update the canvas when receiving socket data
   useEffect(() => {
     function updateCanvas(event) {
